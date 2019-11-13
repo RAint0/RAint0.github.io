@@ -200,6 +200,11 @@
         </h1>
 
         <div class="post-meta">
+          
+            <i class="fa fa-thumb-tack"></i>
+            <font color=7D26CD>置顶</font>
+            <span class="post-meta-divider">|</span>
+          
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
@@ -213,7 +218,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-11-09 22:24:10" itemprop="dateModified" datetime="2019-11-09T22:24:10+08:00">2019-11-09</time>
+                <time title="修改时间：2019-11-13 09:39:57" itemprop="dateModified" datetime="2019-11-13T09:39:57+08:00">2019-11-13</time>
               </span>
 
           
@@ -278,6 +283,102 @@
   
   
 
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://RAint0.github.io/2019/11/13/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/face.jpg">
+      <meta itemprop="name" content="RAint0">
+      <meta itemprop="description" content="来自厦门的郑博文♂">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="RAint0的自留地">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/11/13/index/" class="post-title-link" itemprop="url">关于git Ubuntu的小记录</a>
+        </h1>
+
+        <div class="post-meta">
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2019-11-13 09:33:14 / 修改时间：17:15:42" itemprop="dateCreated datePublished" datetime="2019-11-13T09:33:14+08:00">2019-11-13</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2019/11/13/index/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2019/11/13/index/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>576</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="第一次小记录"><a href="#第一次小记录" class="headerlink" title="第一次小记录"></a><center>第一次小记录</center></h1><pre><code>我还是觉得自己很菜。  </code></pre><p>这几天在科协大佬的指导下玩了下VMware上的Ubuntu；一直不能联网真的气杀我；Orz结果原因是VMware的服务被我关了，win+r输services.msc调出窗口把它们都打开就好了，<u>NAT模式</u>的原理大概是将物理机当做路由器，虚拟机共享网络，至于IP地址的分配我看不懂；<br>Ubuntu18的图形界面很简单，不用输太多的命令，当然学linux就应该学会脱离对图形界面的依赖；首先我要先把源换为阿里云，然后再装中文和Vim(他和git好像);</p>
+<blockquote>
+<p>在终端输入下载安装vim：</p>
+</blockquote>
+<p><code>$sudo apt-get install vim-gtk</code></p>
+<p>相比之下我对git懂得更多一点，通过git和GitHub托管，加上一些轮子搭一个好看的blog还是很简单的；为了写博文，我还要学md语言，md兼容一些HTML语言，写文章简直好用<del>到爆</del>；VScode可以做任何事这一点真的牛。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$hexo clean #把缓存删除</span><br><span class="line">$hexo g     #generate 的简写</span><br><span class="line">$hexo s     #保存 可以在本地打开网页</span><br><span class="line">$hexo d     #deploy 的简写 可以通过ssh部署到GitHub</span><br></pre></td></tr></table></figure>
+<p>HTML语言我学得不怎么样，md语言也就一般般吧；以后再说，老师发了一本书: </p>
+<h1 id="C-Primer-Plus-sixth-edition-Stephen-Prata"><a href="#C-Primer-Plus-sixth-edition-Stephen-Prata" class="headerlink" title="C.Primer.Plus(sixth edition)Stephen.Prata"></a><strong>C.Primer.Plus</strong>(sixth edition)<sub>Stephen.Prata</sub></h2></h1><p>全英文原版，看得头疼，但是<del>好鬼酷啊</del>非常专业；</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
   </div>
 
   
@@ -325,14 +426,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">1</span>
+          <span class="site-state-item-count">2</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -367,7 +468,7 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">0k</span>
+    <span title="站点总字数">1k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
