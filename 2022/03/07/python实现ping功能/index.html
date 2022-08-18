@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.gif">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/logo.gif">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/logo.gif">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"raint0.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.10.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="实验: 实现ping命令1、实验目的：  要求学生掌握Socket编程技术，以及ICMP协议  2、实验内容：  要求学生掌握利用Socket进行编程的技术 不能采用现有的工具，必须自己一步一步，根据协议进行操作 了解ping报文的格式和步骤，要求符合ICMP协议并组建报文 在一秒钟内，如果收到，则为成功，如果收不到，则失败 必须采用图形界面，查看收到回应的结果 可以通过程序，查看子网中有哪些主机">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python实现ping功能">
+<meta property="og:url" content="https://raint0.github.io/2022/03/07/python%E5%AE%9E%E7%8E%B0ping%E5%8A%9F%E8%83%BD/index.html">
+<meta property="og:site_name" content="R_Aint的自留地">
+<meta property="og:description" content="实验: 实现ping命令1、实验目的：  要求学生掌握Socket编程技术，以及ICMP协议  2、实验内容：  要求学生掌握利用Socket进行编程的技术 不能采用现有的工具，必须自己一步一步，根据协议进行操作 了解ping报文的格式和步骤，要求符合ICMP协议并组建报文 在一秒钟内，如果收到，则为成功，如果收不到，则失败 必须采用图形界面，查看收到回应的结果 可以通过程序，查看子网中有哪些主机">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-03-06T16:42:54.000Z">
+<meta property="article:modified_time" content="2022-03-08T15:31:41.697Z">
+<meta property="article:author" content="Aint">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://raint0.github.io/2022/03/07/python%E5%AE%9E%E7%8E%B0ping%E5%8A%9F%E8%83%BD/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://raint0.github.io/2022/03/07/python%E5%AE%9E%E7%8E%B0ping%E5%8A%9F%E8%83%BD/","path":"2022/03/07/python实现ping功能/","title":"python实现ping功能"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>python实现ping功能 | R_Aint的自留地</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/clicklove.js"></script>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">R_Aint的自留地</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fa fa-book fa-fw"></i>留言板</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C-%E5%AE%9E%E7%8E%B0ping%E5%91%BD%E4%BB%A4"><span class="nav-text">实验: 实现ping命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-text">代码</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Aint"
+      src="/images/face.gif">
+  <p class="site-author-name" itemprop="name">Aint</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/RAint0" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;RAint0" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:r_aint@qq.com" title="E-Mail → mailto:r_aint@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://raint0.github.io/2022/03/07/python%E5%AE%9E%E7%8E%B0ping%E5%8A%9F%E8%83%BD/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/face.gif">
+      <meta itemprop="name" content="Aint">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="R_Aint的自留地">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          python实现ping功能
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-03-07 00:42:54" itemprop="dateCreated datePublished" datetime="2022-03-07T00:42:54+08:00">2022-03-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-03-08 23:31:41" itemprop="dateModified" datetime="2022-03-08T23:31:41+08:00">2022-03-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="实验-实现ping命令"><a href="#实验-实现ping命令" class="headerlink" title="实验: 实现ping命令"></a>实验: 实现ping命令</h2><p>1、实验目的：</p>
+<ul>
+<li>要求学生掌握Socket编程技术，以及ICMP协议</li>
+</ul>
+<p>2、实验内容：</p>
+<ul>
+<li>要求学生掌握利用Socket进行编程的技术</li>
+<li>不能采用现有的工具，必须自己一步一步，根据协议进行操作</li>
+<li>了解ping报文的格式和步骤，要求符合ICMP协议并组建报文</li>
+<li>在一秒钟内，如果收到，则为成功，如果收不到，则失败</li>
+<li>必须采用图形界面，查看收到回应的结果</li>
+<li>可以通过程序，查看子网中有哪些主机可以ping通</li>
+</ul>
+<span id="more"></span>
+
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># encoding:utf-8</span></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"><span class="keyword">import</span> select</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> netifaces</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> IPy <span class="keyword">import</span> IP</span><br><span class="line"><span class="keyword">from</span> tkinter <span class="keyword">import</span> * </span><br><span class="line"><span class="keyword">from</span> tkinter <span class="keyword">import</span> scrolledtext, messagebox</span><br><span class="line"><span class="keyword">from</span> concurrent.futures <span class="keyword">import</span> ThreadPoolExecutor</span><br><span class="line"></span><br><span class="line">s_list = []</span><br><span class="line">num = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">chesksum</span>(<span class="params">data</span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    校验和</span></span><br><span class="line"><span class="string">    :return: answer</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    n = <span class="built_in">len</span>(data)</span><br><span class="line">    m = n % <span class="number">2</span></span><br><span class="line">    <span class="built_in">sum</span> = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, n - m, <span class="number">2</span>):</span><br><span class="line">        <span class="comment"># 传入data以每两个字节（十六进制）通过ord转十进制，第一字节在低位，第二个字节在高位</span></span><br><span class="line">        <span class="built_in">sum</span> += (data[i]) + ((data[i+<span class="number">1</span>]) &lt;&lt; <span class="number">8</span>)</span><br><span class="line">    <span class="keyword">if</span> m == <span class="number">1</span>:</span><br><span class="line">        <span class="built_in">sum</span> += (data[-<span class="number">1</span>])</span><br><span class="line">    <span class="comment"># 将高于16位与低16位相加</span></span><br><span class="line">    <span class="built_in">sum</span> = (<span class="built_in">sum</span> &gt;&gt; <span class="number">16</span>) + (<span class="built_in">sum</span> &amp; <span class="number">0xffff</span>)</span><br><span class="line">    <span class="built_in">sum</span> += (<span class="built_in">sum</span> &gt;&gt; <span class="number">16</span>)  <span class="comment"># 如果还有高于16位，将继续与低16位相加</span></span><br><span class="line">    <span class="comment"># 取反</span></span><br><span class="line">    answer = ~<span class="built_in">sum</span> &amp; <span class="number">0xffff</span></span><br><span class="line">    <span class="comment"># 主机字节序转网络字节序列（参考小端序转大端序）</span></span><br><span class="line">    answer = answer &gt;&gt; <span class="number">8</span> | (answer &lt;&lt; <span class="number">8</span> &amp; <span class="number">0xff00</span>)</span><br><span class="line">    <span class="keyword">return</span> answer</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">request_ping</span>(<span class="params">data_type, data_code, data_checksum, data_ID, data_Sequence, payload_body</span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">       请求报文</span></span><br><span class="line"><span class="string">       :return: icmp_packet</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="comment">#  把字节打包成二进制数据 </span></span><br><span class="line">    <span class="comment"># &gt;:big-endian </span></span><br><span class="line">    <span class="comment"># B:unsigned char </span></span><br><span class="line">    <span class="comment"># H:unsigned short</span></span><br><span class="line">    <span class="comment"># 32s:char[32]</span></span><br><span class="line">    fmt = <span class="string">&#x27;&gt;BBHHH32s&#x27;</span></span><br><span class="line">    icmp_packet = struct.pack(fmt, data_type, data_code,</span><br><span class="line">                              data_checksum, data_ID, data_Sequence, payload_body)</span><br><span class="line">    icmp_chesksum = chesksum(icmp_packet)  <span class="comment"># 获取校验和</span></span><br><span class="line">    <span class="comment">#  把校验和传入，再次打包</span></span><br><span class="line">    icmp_packet = struct.pack(fmt, data_type, data_code,</span><br><span class="line">                              icmp_chesksum, data_ID, data_Sequence, payload_body)</span><br><span class="line">    <span class="keyword">return</span> icmp_packet</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">raw_socket</span>(<span class="params">dst_addr, icmp_packet</span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">       创建套接字,并将数据发送到套接字</span></span><br><span class="line"><span class="string">       :return: send_time, rawsocket</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="comment"># 实例化一个socket对象，ipv4，原套接字，分配协议端口</span></span><br><span class="line">    rawsocket = socket.socket(</span><br><span class="line">        socket.AF_INET, socket.SOCK_RAW, socket.getprotobyname(<span class="string">&quot;icmp&quot;</span>))</span><br><span class="line">    <span class="comment"># 记录当前请求时间</span></span><br><span class="line">    send_time = time.time()</span><br><span class="line">    <span class="comment"># 发送数据到网络</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        rawsocket.sendto(icmp_packet, (dst_addr, <span class="number">0</span>))</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>,rawsocket</span><br><span class="line">    <span class="comment"># 返回数据</span></span><br><span class="line">    <span class="keyword">return</span> send_time, rawsocket</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">reply_ping</span>(<span class="params">send_time, rawsocket, data_Sequence, dst_addr,timeout=<span class="number">1</span></span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    应答报文分析，计算时间</span></span><br><span class="line"><span class="string">    :return: received_time - send_time or -1</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="comment"># 实例化select对象，可读rawsocket，可写为空，可执行为空，超时时间</span></span><br><span class="line">        what_ready = select.select([rawsocket], [], [], timeout)</span><br><span class="line">        <span class="comment"># 等待时间</span></span><br><span class="line">        wait_for_time = (time.time() - send_time)</span><br><span class="line">        <span class="comment"># 没有返回可读的内容，判断超时</span></span><br><span class="line">        <span class="keyword">if</span> what_ready[<span class="number">0</span>] == []:  <span class="comment"># Timeout</span></span><br><span class="line">            <span class="keyword">return</span> -<span class="number">1</span></span><br><span class="line">        <span class="comment"># 记录接收时间</span></span><br><span class="line">        received_time = time.time()</span><br><span class="line">        <span class="comment"># 设置接收的包的字节为1024</span></span><br><span class="line">        received_packet, addr = rawsocket.recvfrom(<span class="number">1024</span>)</span><br><span class="line">        <span class="comment"># 获取接收包的icmp头</span></span><br><span class="line">        icmpHeader = received_packet[<span class="number">20</span>:<span class="number">28</span>]</span><br><span class="line">        <span class="comment"># 解包</span></span><br><span class="line">        icmp_type, code, checksum, packet_id, sequence = struct.unpack(<span class="string">&quot;&gt;BBHHH&quot;</span>, icmpHeader)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> icmp_type == <span class="number">0</span> <span class="keyword">and</span> sequence == data_Sequence <span class="keyword">and</span> addr[<span class="number">0</span>] == dst_addr:</span><br><span class="line">            <span class="keyword">return</span> received_time - send_time</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 数据包的超时时间判断</span></span><br><span class="line">        <span class="keyword">if</span> timeout - wait_for_time &lt;= <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> -<span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_host_ip</span>():</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    查询本机ip地址</span></span><br><span class="line"><span class="string">    :return: ip</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)</span><br><span class="line">        s.connect((<span class="string">&#x27;8.8.8.8&#x27;</span>,<span class="number">0</span>))</span><br><span class="line">        ip = s.getsockname()[<span class="number">0</span>]</span><br><span class="line">    <span class="keyword">finally</span>:</span><br><span class="line">        s.close()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ip</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_netmask</span>():</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    获取子网掩码</span></span><br><span class="line"><span class="string">    :return: netmask</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">    ip = get_host_ip()</span><br><span class="line">    <span class="comment">#获取所有本机网络接口</span></span><br><span class="line">    interfaces = netifaces.interfaces()</span><br><span class="line">    <span class="comment">#查看网络接口参数</span></span><br><span class="line">    <span class="keyword">for</span> ifc <span class="keyword">in</span> interfaces:</span><br><span class="line">        n = netifaces.ifaddresses(ifc)</span><br><span class="line">        <span class="keyword">if</span> n.get(<span class="number">2</span>):</span><br><span class="line">            <span class="keyword">if</span> n[<span class="number">2</span>][<span class="number">0</span>][<span class="string">&#x27;addr&#x27;</span>] == ip:</span><br><span class="line">                netmask = n[<span class="number">2</span>][<span class="number">0</span>][<span class="string">&#x27;netmask&#x27;</span>]</span><br><span class="line">                <span class="keyword">return</span> netmask</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">ping</span>(<span class="params">host</span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    ping</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(host) == <span class="number">0</span>:  <span class="comment">#如果为空则什么都不做</span></span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    accept, lost = <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">    sumtime, shorttime, longtime = <span class="number">0</span>, <span class="number">1000</span>, <span class="number">0</span></span><br><span class="line">    <span class="comment">#icmp数据包的构建</span></span><br><span class="line">    data_type = <span class="number">8</span>  <span class="comment"># 类型：ICMP Echo Request——回显请求（Ping请求）</span></span><br><span class="line">    data_code = <span class="number">0</span>  <span class="comment"># 代码：0</span></span><br><span class="line">    data_checksum = <span class="number">0</span>  <span class="comment"># 校验和：先以0代替</span></span><br><span class="line">    data_ID = <span class="number">0</span>  <span class="comment"># Identifier：设置为ping 进程的进程ID</span></span><br><span class="line">    data_Sequence = <span class="number">1</span>  <span class="comment"># Sequence number：每个发送出去的分组递增序列号。</span></span><br><span class="line">    payload_body = <span class="string">b&#x27;12345678912345678912345678912&#x27;</span>  <span class="comment"># data：数据部分</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 将主机名转ipv4地址格式，返回以ipv4地址格式的字符串，如果主机名称是ipv4地址，则它将保持不变</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        dst_addr = socket.gethostbyname(host)</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        messagebox.showwarning(title=<span class="string">&#x27;ERROR&#x27;</span>, message=<span class="string">&#x27;错误的域名或IP地址&#x27;</span>)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    txt1.insert(END,dst_addr)</span><br><span class="line">    root.update()</span><br><span class="line">    s=<span class="string">&quot;正在 Ping &#123;0&#125; [&#123;1&#125;] 具有 32 字节的数据:&quot;</span>.<span class="built_in">format</span>(host, dst_addr)</span><br><span class="line">    txt.insert(END,s)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">4</span>):</span><br><span class="line">        <span class="comment"># 请求ping数据包的二进制转换</span></span><br><span class="line">        icmp_packet = request_ping(</span><br><span class="line">            data_type, data_code, data_checksum, data_ID, data_Sequence + i, payload_body)</span><br><span class="line">        <span class="comment"># 连接套接字,并将数据发送到套接字</span></span><br><span class="line">        send_time, rawsocket = raw_socket(dst_addr, icmp_packet)</span><br><span class="line">        <span class="keyword">if</span> send_time == -<span class="number">1</span>:  <span class="comment">#即raw_socke(dst_addr, icmp_packet)里有报错</span></span><br><span class="line">            messagebox.showwarning(title=<span class="string">&#x27;ERROR&#x27;</span>, message=<span class="string">&#x27;请求的地址无效&#x27;</span>)</span><br><span class="line">            s=<span class="string">&quot;\n请求的地址无效\n&quot;</span></span><br><span class="line">            txt.insert(END,s)</span><br><span class="line">            root.update()</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        <span class="comment"># 数据包传输时间</span></span><br><span class="line">        times = reply_ping(send_time,rawsocket, data_Sequence + i,dst_addr)</span><br><span class="line">        <span class="keyword">if</span> times &gt;= <span class="number">0</span>:</span><br><span class="line">            s=<span class="string">&quot;\n来自 &#123;0&#125; 的回复: 字节=32 时间=&#123;1&#125;ms&quot;</span>.<span class="built_in">format</span>(dst_addr, <span class="built_in">int</span>(times*<span class="number">1000</span>))</span><br><span class="line">            txt.insert(END,s)</span><br><span class="line">            root.update()</span><br><span class="line">            accept += <span class="number">1</span></span><br><span class="line">            return_time = <span class="built_in">int</span>(times * <span class="number">1000</span>)</span><br><span class="line">            sumtime += return_time</span><br><span class="line">            <span class="keyword">if</span> return_time &gt; longtime:</span><br><span class="line">                longtime = return_time</span><br><span class="line">            <span class="keyword">if</span> return_time &lt; shorttime:</span><br><span class="line">                shorttime = return_time</span><br><span class="line">            time.sleep(<span class="number">0.7</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            lost += <span class="number">1</span></span><br><span class="line">            txt.insert(END,<span class="string">&quot;\n请求超时。&quot;</span>)</span><br><span class="line">            root.update()</span><br><span class="line">        <span class="keyword">if</span>  i+<span class="number">1</span> == <span class="number">4</span>:</span><br><span class="line">            s=<span class="string">&quot;\n&#123;0&#125;的Ping统计信息:\n&quot;</span>.<span class="built_in">format</span>(dst_addr)</span><br><span class="line">            txt.insert(END,s)</span><br><span class="line">            root.update()</span><br><span class="line">            s=<span class="string">&quot;\t数据包：已发送=&#123;0&#125;,接收=&#123;1&#125;，丢失=&#123;2&#125;（&#123;3&#125;%丢失），\</span></span><br><span class="line"><span class="string">                \n往返行程的估计时间（以毫秒为单位）：\</span></span><br><span class="line"><span class="string">                \n\t最短=&#123;4&#125;ms，最长=&#123;5&#125;ms，平均=&#123;6&#125;ms\n&quot;</span>.<span class="built_in">format</span>(</span><br><span class="line">                i + <span class="number">1</span>, accept, lost, lost / (i + <span class="number">1</span>) * <span class="number">100</span>,</span><br><span class="line">                shorttime, longtime, sumtime/accept <span class="keyword">if</span> accept != <span class="number">0</span> <span class="keyword">else</span> <span class="string">&#x27;NaN &#x27;</span>)</span><br><span class="line">            txt.insert(END,s)</span><br><span class="line">            txt1.delete(<span class="number">0.0</span>, END)</span><br><span class="line">            root.update()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">test</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">global</span> s_list</span><br><span class="line">    <span class="keyword">global</span> num</span><br><span class="line">    <span class="comment">#icmp数据包的构建</span></span><br><span class="line">    data_type = <span class="number">8</span>  <span class="comment"># 类型：ICMP Echo Request——回显请求（Ping请求）</span></span><br><span class="line">    data_code = <span class="number">0</span>  <span class="comment"># 代码：0</span></span><br><span class="line">    data_checksum = <span class="number">0</span>  <span class="comment"># 校验和：先以0代替</span></span><br><span class="line">    data_ID = <span class="number">0</span>  <span class="comment"># Identifier：设置为ping 进程的进程ID</span></span><br><span class="line">    data_Sequence = <span class="number">1</span>  <span class="comment"># Sequence number：每个发送出去的分组递增序列号。</span></span><br><span class="line">    payload_body = <span class="string">b&#x27;01234567890123456789012345678901&#x27;</span>  <span class="comment"># data：数据部分</span></span><br><span class="line">    <span class="comment"># 请求ping数据包的二进制转换</span></span><br><span class="line">    icmp_packet = request_ping(</span><br><span class="line">        data_type, data_code, data_checksum, data_ID, data_Sequence, payload_body)</span><br><span class="line">    <span class="comment"># 连接套接字,并将数据发送到套接字</span></span><br><span class="line">    send_time, rawsocket = raw_socket(x.strNormal(<span class="number">0</span>), icmp_packet)</span><br><span class="line">    <span class="comment"># 数据包传输时间</span></span><br><span class="line">    times = reply_ping(send_time,rawsocket, data_Sequence, x.strNormal(<span class="number">0</span>))</span><br><span class="line">   </span><br><span class="line">    <span class="built_in">print</span>(x.strNormal(<span class="number">0</span>),end =<span class="string">&quot;&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> times &gt;= <span class="number">0</span>:</span><br><span class="line">        num += <span class="number">1</span></span><br><span class="line">        s=<span class="string">&quot;\n&#123;0&#125; :字节=32 时间=&#123;1&#125;ms&quot;</span>.<span class="built_in">format</span>(x.strNormal(<span class="number">0</span>), <span class="built_in">int</span>(times*<span class="number">1000</span>))</span><br><span class="line">        s_list.append(s)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27; success&#x27;</span>,end =<span class="string">&quot;&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">find</span>():</span><br><span class="line">    <span class="keyword">global</span> s_list</span><br><span class="line">    <span class="keyword">global</span> num</span><br><span class="line">    host_ip = get_host_ip()</span><br><span class="line">    netmask = get_netmask()</span><br><span class="line">    ip = IP(host_ip).make_net(netmask)</span><br><span class="line">    s = ip.strNormal(<span class="number">1</span>)</span><br><span class="line">    txt1.insert(END,s)</span><br><span class="line">    s=<span class="string">&quot;正在进行子网设备发现...&quot;</span></span><br><span class="line">    txt.insert(END,s)</span><br><span class="line">    root.update()</span><br><span class="line">    s_list = []</span><br><span class="line">    num = <span class="number">0</span></span><br><span class="line">    pool = ThreadPoolExecutor(<span class="number">255</span>)<span class="comment">#限制最大线程量为255</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> x <span class="keyword">in</span> ip:</span><br><span class="line">        <span class="keyword">if</span> x != ip[<span class="number">0</span>] <span class="keyword">and</span> x.strNormal(<span class="number">0</span>) != host_ip <span class="keyword">and</span> x != ip [ip.<span class="built_in">len</span>()-<span class="number">1</span>]:</span><br><span class="line">            pool.submit(test,x)</span><br><span class="line">    </span><br><span class="line">    pool.shutdown(wait=<span class="literal">True</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> s <span class="keyword">in</span> s_list:</span><br><span class="line">        txt.insert(END,s)</span><br><span class="line">    s=<span class="string">&quot;\n完成.共&#123;0&#125;个.\n&quot;</span>.<span class="built_in">format</span>(num)</span><br><span class="line">    txt.insert(END,s)</span><br><span class="line">    txt1.delete(<span class="number">0.0</span>, END)</span><br><span class="line">    root.update()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">clear</span>():</span><br><span class="line">    txt.delete(<span class="number">0.0</span>, END)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">exit</span>():</span><br><span class="line">    sys.exit(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    图形化界面及调用</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span> </span><br><span class="line">    root = Tk()</span><br><span class="line">    root.title(<span class="string">&#x27;PING TOOL&#x27;</span>)</span><br><span class="line">    root.geometry(<span class="string">&#x27;720x560&#x27;</span>)</span><br><span class="line">    </span><br><span class="line">    host_lb = Label(root, text=<span class="string">&#x27;请输入要ping的主机或域名&#x27;</span>)</span><br><span class="line">    host_lb.place(relx=<span class="number">0.1</span>, rely=<span class="number">0.1</span>, relwidth=<span class="number">0.8</span>, relheight=<span class="number">0.1</span>)</span><br><span class="line">    inp1 = Entry(root)</span><br><span class="line">    inp1.place(relx=<span class="number">0.1</span>, rely=<span class="number">0.2</span>, relwidth=<span class="number">0.6</span>, relheight=<span class="number">0.1</span>)</span><br><span class="line"></span><br><span class="line">    ping_btn = Button(root, text=<span class="string">&#x27;PING&#x27;</span>, command=<span class="keyword">lambda</span>: ping(<span class="built_in">str</span>(inp1.get())))</span><br><span class="line">    ping_btn.place(relx=<span class="number">0.7</span>, rely=<span class="number">0.2</span>, relwidth=<span class="number">0.2</span>, relheight=<span class="number">0.1</span>)</span><br><span class="line"></span><br><span class="line">    s = <span class="string">&quot;本机IP地址：&quot;</span>+ get_host_ip()</span><br><span class="line">    ip_lb = Label(root, text=s)</span><br><span class="line">    ip_lb.place(relx=<span class="number">0.1</span>, rely=<span class="number">0.3</span>, relwidth=<span class="number">0.3</span>, relheight=<span class="number">0.1</span>)</span><br><span class="line">    s = <span class="string">&quot;子网掩码：&quot;</span> + get_netmask()</span><br><span class="line">    netmask_lb = Label(root, text=s)</span><br><span class="line">    netmask_lb.place(relx=<span class="number">0.4</span>, rely=<span class="number">0.3</span>, relwidth=<span class="number">0.3</span>, relheight=<span class="number">0.1</span>)</span><br><span class="line">    </span><br><span class="line">    find_lb = Label(root, text=<span class="string">&quot;正在Ping:&quot;</span>)</span><br><span class="line">    find_lb.place(relx=<span class="number">0</span>, rely=<span class="number">0.5</span>, relwidth=<span class="number">0.2</span>, relheight=<span class="number">0.1</span>)</span><br><span class="line"></span><br><span class="line">    txt1 = Text(root)</span><br><span class="line">    txt1.place(relx=<span class="number">0.2</span>, rely=<span class="number">0.53</span>, relwidth=<span class="number">0.2</span>, relheight=<span class="number">0.05</span>)</span><br><span class="line"></span><br><span class="line">    find_btn = Button(root, text=<span class="string">&#x27;FIND DEVICE IN LAN&#x27;</span>, command=<span class="keyword">lambda</span>: find())</span><br><span class="line">    find_btn.place(relx=<span class="number">0.2</span>, rely=<span class="number">0.4</span>, relwidth=<span class="number">0.3</span>, relheight=<span class="number">0.1</span>)</span><br><span class="line">    clear_btn = Button(root, text=<span class="string">&#x27;CLEAR&#x27;</span>, command=clear)</span><br><span class="line">    clear_btn.place(relx=<span class="number">0.5</span>, rely=<span class="number">0.4</span>, relwidth=<span class="number">0.3</span>, relheight=<span class="number">0.1</span>)</span><br><span class="line">    exit_btn = Button(root, text=<span class="string">&#x27;EXIT&#x27;</span>, command=exit)</span><br><span class="line">    exit_btn.place(relx=<span class="number">0.5</span>, rely=<span class="number">0.5</span>, relwidth=<span class="number">0.3</span>, relheight=<span class="number">0.1</span>)</span><br><span class="line"></span><br><span class="line">    txt = scrolledtext.ScrolledText(root)</span><br><span class="line">    txt.place(rely = <span class="number">0.6</span>,relwidth=<span class="number">1.0</span>,relheight =<span class="number">0.4</span>)</span><br><span class="line"></span><br><span class="line">    root.mainloop()</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Aint
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://raint0.github.io/2022/03/07/python%E5%AE%9E%E7%8E%B0ping%E5%8A%9F%E8%83%BD/" title="python实现ping功能">https://raint0.github.io/2022/03/07/python实现ping功能/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/python/" rel="tag"># python</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/05/18/DOKIDOKI/" rel="prev" title="DOKIDOKI">
+                  <i class="fa fa-chevron-left"></i> DOKIDOKI
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/03/10/%E9%B8%BF%E8%92%99%E7%B3%BB%E7%BB%9F%E5%85%B3%E9%97%AD%E5%B7%A6%E5%8F%B3%E4%B8%8B%E8%A7%92%E4%B8%8A%E6%BB%91%E8%B7%B3%E8%BD%AC%E6%88%91%E7%9A%84%E6%9C%8D%E5%8A%A1/" rel="next" title="鸿蒙系统关闭左右下角上滑跳转「我的服务」">
+                  鸿蒙系统关闭左右下角上滑跳转「我的服务」 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Aint</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdn.jsdelivr.net/npm/ribbon.js@1.0.2/dist/ribbon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"RAint0/RAint0.github.io","issue_term":"pathname","theme":"preferred-color-scheme","crossorigin":"anonymous","label":"💬comment"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>
