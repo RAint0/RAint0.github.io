@@ -21,15 +21,15 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"raint0.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.10.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="Tips关闭网页弹窗解决办法：通过修改 EnableActiveProbing 的值  开始 –&gt; 运行 –&gt; regedit – &gt; 确定 逐次找到HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\NlaSvc\Parameters\Internet\双击右边窗口里的 EnableActiveProbing，如图所示，在数">
+    <meta name="description" content="Tips关闭网页弹窗解决办法：通过修改 EnableActiveProbing 的值  开始 –&gt; 运行 –&gt; regedit – &gt; 确定  逐次找到     HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\NlaSvc\Parameters\Internet\   双击右边窗口里的 EnableActiveProbin">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Tips">
 <meta property="og:url" content="https://raint0.github.io/2020/01/03/tips/index.html">
 <meta property="og:site_name" content="R_Aint的自留地">
-<meta property="og:description" content="Tips关闭网页弹窗解决办法：通过修改 EnableActiveProbing 的值  开始 –&gt; 运行 –&gt; regedit – &gt; 确定 逐次找到HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\NlaSvc\Parameters\Internet\双击右边窗口里的 EnableActiveProbing，如图所示，在数">
+<meta property="og:description" content="Tips关闭网页弹窗解决办法：通过修改 EnableActiveProbing 的值  开始 –&gt; 运行 –&gt; regedit – &gt; 确定  逐次找到     HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\NlaSvc\Parameters\Internet\   双击右边窗口里的 EnableActiveProbin">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-01-03T05:01:00.000Z">
-<meta property="article:modified_time" content="2022-04-07T07:56:29.372Z">
+<meta property="article:modified_time" content="2022-09-16T15:44:42.975Z">
 <meta property="article:author" content="Aint">
 <meta property="article:tag" content="note">
 <meta name="twitter:card" content="summary">
@@ -228,7 +228,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-04-07 15:56:29" itemprop="dateModified" datetime="2022-04-07T15:56:29+08:00">2022-04-07</time>
+      <time title="修改时间：2022-09-16 23:44:42" itemprop="dateModified" datetime="2022-09-16T23:44:42+08:00">2022-09-16</time>
     </span>
 
   
@@ -243,13 +243,18 @@
     <div class="post-body" itemprop="articleBody">
         <h2 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a><strong>Tips</strong></h2><h2 id="关闭网页弹窗"><a href="#关闭网页弹窗" class="headerlink" title="关闭网页弹窗"></a>关闭网页弹窗</h2><p>解决办法：通过修改 EnableActiveProbing 的值</p>
 <ol>
-<li>开始 –&gt; 运行 –&gt; regedit – &gt; 确定</li>
-<li>逐次找到HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\NlaSvc\Parameters\Internet\双击右边窗口里的 EnableActiveProbing，如图所示，在数值数据中，输入0，默认值是1，确定。问题解决<br>转自<a target="_blank" rel="noopener" href="https://blog.csdn.net/baobao3456810/article/details/51372050">https://blog.csdn.net/baobao3456810/article/details/51372050</a></li>
+<li><p>开始 –&gt; 运行 –&gt; regedit – &gt; 确定</p>
+</li>
+<li><p>逐次找到</p>
+</li>
 </ol>
+<p>  HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\NlaSvc\Parameters\Internet\</p>
+<p>  双击右边窗口里的 EnableActiveProbing，如图所示，在数值数据中，输入0，默认值是1，确定。问题解决<br>  转自<a target="_blank" rel="noopener" href="https://blog.csdn.net/baobao3456810/article/details/51372050">https://blog.csdn.net/baobao3456810/article/details/51372050</a></p>
 <blockquote>
 <p>ps:这样连wifi登录页面也不会弹出 有时候还要改回来</p>
 </blockquote>
 <span id="more"></span>
+
 <h2 id="语音关机"><a href="#语音关机" class="headerlink" title="语音关机"></a>语音关机</h2><p>使用小娜Cortana语音开关机<br>小娜是Windows10系统的语音助手<br>它是没有关机功能的（也许怕误触）<br>可以通过一个小操作实现  </p>
 <ol>
 <li><p>依次进入C:\Users（用户名）\AppData\Roaming\Microsoft\Windows\Start Menu\Programs(需要勾选查看隐藏项目)</p>
